@@ -24,9 +24,9 @@ JWT 기본 이해
 
 로직 작성
 * [ ] 백엔드 로직을 Spring Boot로
-* [ ] 회원가입 - /signup
-    * [ ] Request Message
-    * [ ] Response Message
+* [x] 회원가입 - /signup
+    * [x] Request Message
+    * [x] Response Message
 * [ ] 로그인 - /sign 
     * [ ] Request Message
     * [ ] Response Message
