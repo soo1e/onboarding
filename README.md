@@ -14,7 +14,7 @@ Spring Security 기본 이해
 JWT 기본 이해
 * [x] JWT란 무엇인가요?
 토큰 발행과 유효성 확인
-* [ ] Access / Refresh Token 발행과 검증에 관한 테스트 시나리오 작성하기
+* [x] Access / Refresh Token 발행과 검증에 관한 테스트 시나리오 작성하기
 유닛 테스트 작성
 * [x] JUnit를 이용한 JWT Unit 테스트 코드 작성해보기 (https://preasim.github.io/39 https://velog.io/@da_na/Spring-Security-JWT-Spring-Security-Controller-Unit-Test하기)
 
