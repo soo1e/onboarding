@@ -27,7 +27,7 @@ public class AuthController {
 	@RoleCheck("ROLE_ADMIN")
 	@GetMapping("/admin")
 	public ResponseEntity<String> adminAccess() {
-		return ResponseEntity.ok("관리자만 접근 가능");
+		return ResponseEntity.ok("관리자만 접근 가능합니다! 당신은 관리자군요");
 	}
 
 }

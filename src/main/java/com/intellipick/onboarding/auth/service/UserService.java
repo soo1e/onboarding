@@ -1,13 +1,12 @@
 package com.intellipick.onboarding.auth.service;
 
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import com.intellipick.onboarding.auth.dto.SignupRequest;
 import com.intellipick.onboarding.auth.dto.SignupResponse;
 import com.intellipick.onboarding.auth.entity.Role;
 import com.intellipick.onboarding.auth.entity.User;
 import com.intellipick.onboarding.auth.repository.UserRepository;
-
 import lombok.RequiredArgsConstructor;
 
 @Service
@@ -15,12 +14,16 @@ import lombok.RequiredArgsConstructor;
 public class UserService {
 
 	private final UserRepository userRepository;
+	private final PasswordEncoder passwordEncoder;
 
 	public SignupResponse signup(SignupRequest request) {
+		if (userRepository.findByUsername(request.username()).isPresent()) {
+			throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+		}
 
 		User user = User.builder()
 			.username(request.username())
-			.password(request.password())
+			.password(passwordEncoder.encode(request.password()))
 			.nickname(request.nickname())
 			.role(Role.ROLE_USER)
 			.build();
@@ -29,5 +32,4 @@ public class UserService {
 
 		return new SignupResponse(user.getUsername(), user.getNickname(), user.getRole());
 	}
-
 }
