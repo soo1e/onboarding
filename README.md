@@ -1,6 +1,6 @@
 ### Requirements
 
-* [ ] Junit를 이용한 테스트 코드 작성법 이해
+* [x] Junit를 이용한 테스트 코드 작성법 이해
 * [x] Spring Security를 이용한 Filter에 대한 이해
 * [x] JWT와 구체적인 알고리즘의 이해
 * [x] PR 날려보기
@@ -16,11 +16,11 @@ JWT 기본 이해
 토큰 발행과 유효성 확인
 * [ ] Access / Refresh Token 발행과 검증에 관한 테스트 시나리오 작성하기
 유닛 테스트 작성
-* [ ] JUnit를 이용한 JWT Unit 테스트 코드 작성해보기 (https://preasim.github.io/39 https://velog.io/@da_na/Spring-Security-JWT-Spring-Security-Controller-Unit-Test하기)
+* [x] JUnit를 이용한 JWT Unit 테스트 코드 작성해보기 (https://preasim.github.io/39 https://velog.io/@da_na/Spring-Security-JWT-Spring-Security-Controller-Unit-Test하기)
 
 #### 백엔드 배포하기
 테스트 완성
-* [ ] 백엔드 유닛 테스트 완성하기
+* [x] 백엔드 유닛 테스트 완성하기
 
 로직 작성
 * [x] 백엔드 로직을 Spring Boot로
