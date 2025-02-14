@@ -9,10 +9,15 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
-    private String secretKey;
+
+
+    private final String secretKey;
 
     private static final long EXPIRATION_TIME = 1000 * 60 * 60;
+
+    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
+        this.secretKey = secretKey;
+    }
 
     // JWT 생성
     public String generateToken(String username, String role) {
