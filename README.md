@@ -1,18 +1,18 @@
 ### Requirements
 
 * [ ] Junit를 이용한 테스트 코드 작성법 이해
-* [ ] Spring Security를 이용한 Filter에 대한 이해
-* [ ] JWT와 구체적인 알고리즘의 이해
-* [ ] PR 날려보기
+* [x] Spring Security를 이용한 Filter에 대한 이해
+* [x] JWT와 구체적인 알고리즘의 이해
+* [x] PR 날려보기
 * [ ] 리뷰 바탕으로 개선하기
 * [ ] EC2에 배포해보기
 ----
 #### 시나리오 설계 및 코딩 시작!
 Spring Security 기본 이해
-* [ ] Filter란 무엇인가?(with Interceptor, AOP)
-* [ ] Spring Security란?
+* [x] Filter란 무엇인가?(with Interceptor, AOP)
+* [x] Spring Security란?
 JWT 기본 이해
-* [ ] JWT란 무엇인가요?
+* [x] JWT란 무엇인가요?
 토큰 발행과 유효성 확인
 * [ ] Access / Refresh Token 발행과 검증에 관한 테스트 시나리오 작성하기
 유닛 테스트 작성
@@ -23,13 +23,13 @@ JWT 기본 이해
 * [ ] 백엔드 유닛 테스트 완성하기
 
 로직 작성
-* [ ] 백엔드 로직을 Spring Boot로
+* [x] 백엔드 로직을 Spring Boot로
 * [x] 회원가입 - /signup
     * [x] Request Message
     * [x] Response Message
-* [ ] 로그인 - /sign 
-    * [ ] Request Message
-    * [ ] Response Message
+* [x] 로그인 - /sign 
+    * [x] Request Message
+    * [x] Response Message
 
 배포해보기
 * [ ] AWS EC2 에 배포하기
