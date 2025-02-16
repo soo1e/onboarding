@@ -1,3 +1,5 @@
+## LINK : http://44.211.74.78:8080/swagger-ui
+----
 ### Requirements
 
 * [x] Junit를 이용한 테스트 코드 작성법 이해
@@ -5,7 +7,7 @@
 * [x] JWT와 구체적인 알고리즘의 이해
 * [x] PR 날려보기
 * [ ] 리뷰 바탕으로 개선하기
-* [ ] EC2에 배포해보기
+* [x] EC2에 배포해보기 : http://44.211.74.78:8080/swagger-ui
 ----
 #### 시나리오 설계 및 코딩 시작!
 Spring Security 기본 이해
@@ -32,10 +34,10 @@ JWT 기본 이해
     * [x] Response Message
 
 배포해보기
-* [ ] AWS EC2 에 배포하기
+* [x] AWS EC2 에 배포하기
 
 API 접근과 검증
-* [ ] Swagger UI 로 접속 가능하게 하기
+* [x] Swagger UI 로 접속 가능하게 하기
 
 ----
 #### 백엔드 개선하기
