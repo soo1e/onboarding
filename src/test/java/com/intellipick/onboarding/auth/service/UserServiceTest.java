@@ -69,7 +69,8 @@ class UserServiceTest {
             .role(Role.ROLE_USER)
             .build();
 
-        when(userRepository.findByUsername(request.username())).thenReturn(Optional.of(existingUser));
+        when(userRepository.findByUsername(request.username()))
+            .thenReturn(Optional.of(existingUser));
 
         IllegalArgumentException thrownException = assertThrows(
             IllegalArgumentException.class,
@@ -79,4 +80,6 @@ class UserServiceTest {
 
         assertEquals("이미 존재하는 사용자입니다.", thrownException.getMessage());
     }
+
+
 }
