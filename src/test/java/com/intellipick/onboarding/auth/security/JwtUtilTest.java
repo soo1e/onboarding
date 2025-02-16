@@ -4,22 +4,15 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.boot.test.context.SpringBootTest;
-
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class JwtUtilTest {
 
     private JwtUtil jwtUtil;
 
-    @Value("${jwt.secret}")
-    private String secretKey;
-
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil(secretKey);
+        jwtUtil = new JwtUtil("templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789");  // ✅ 직접 SecretKey 주입 (환경 변수 불필요)
     }
 
     @Test
