@@ -41,6 +41,8 @@ dependencies {
     testRuntimeOnly 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
     implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+
+    runtimeOnly 'com.h2database:h2'
 }
 
 tasks.named('test') {
