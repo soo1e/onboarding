@@ -1,6 +1,9 @@
 package com.intellipick.onboarding.auth.security;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -9,27 +12,25 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+    @Value("${jwt.secret}")
+    private String secretKey;
 
-
-    private final String secretKey;
-
-    private static final long EXPIRATION_TIME = 1000 * 60 * 60;
-
-    public JwtUtil(@Value("${jwt.secret}") String secretKey) {
+    public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
 
-    // JWT 생성
     public String generateToken(String username, String role) {
+        System.out.println("[JwtUtil] 토큰 생성 - username: " + username + ", role: " + role);
+
         return Jwts.builder()
             .setSubject(username)
             .claim("role", role)
-            .setExpiration(new Date(System.currentTimeMillis() + EXPIRATION_TIME))
+            .setIssuedAt(new Date())
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact();
     }
 
-    // 토큰 검증 및 파싱
     public Claims extractClaims(String token) {
         return Jwts.parser()
             .setSigningKey(secretKey)
@@ -37,17 +38,14 @@ public class JwtUtil {
             .getBody();
     }
 
-    // 토큰에서 사용자명 추출
-    public String extractUsername(String token) {
+    public String getUsername(String token) {
         return extractClaims(token).getSubject();
     }
 
-    // 토큰에서 역할(role) 추출
-    public String extractRole(String token) {
+    public String getUserRole(String token) {
         return extractClaims(token).get("role", String.class);
     }
 
-    // 토큰 유효성 검사
     public boolean validateToken(String token) {
         try {
             extractClaims(token);
@@ -55,5 +53,13 @@ public class JwtUtil {
         } catch (Exception e) {
             return false;
         }
+    }
+
+    public String resolveToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken != null && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
+        }
+        return null;
     }
 }
