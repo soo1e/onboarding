@@ -4,15 +4,19 @@ import io.jsonwebtoken.Claims;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
+@SpringBootTest
 class JwtUtilTest {
 
+    @Autowired
     private JwtUtil jwtUtil;
 
     @BeforeEach
     void setUp() {
-        jwtUtil = new JwtUtil("templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789templlo123456789");  // ✅ 직접 SecretKey 주입 (환경 변수 불필요)
+        jwtUtil.setSecretKey("templlo123456789templlo123456789templlo123456789");
     }
 
     @Test
