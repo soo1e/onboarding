@@ -63,6 +63,11 @@ class AuthServiceTest {
 
         when(userRepository.findByUsername(request.username())).thenReturn(Optional.empty());
 
-        assertThrows(IllegalArgumentException.class, () -> authService.login(request));
+        IllegalArgumentException thrownException = assertThrows(
+            IllegalArgumentException.class,
+            () -> authService.login(request)
+        );
+
+        assertEquals("아이디 또는 비밀번호가 올바르지 않습니다.", thrownException.getMessage());
     }
 }

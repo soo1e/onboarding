@@ -47,14 +47,15 @@ class UserServiceTest {
             .build();
 
         when(userRepository.findByUsername(request.username())).thenReturn(Optional.empty());
-        when(passwordEncoder.encode(request.password())).thenReturn("encodedPassword"); // ✅ Mock Password Encoding 설정
+        when(passwordEncoder.encode(request.password())).thenReturn("encodedPassword");
         when(userRepository.save(any(User.class))).thenReturn(user);
 
         SignupResponse response = userService.signup(request);
 
         assertNotNull(response);
         assertEquals("testuser", response.username());
-        assertEquals(Role.ROLE_USER, response.role());
+        assertEquals("testnickname", response.nickname());
+        assertEquals(Role.ROLE_USER, response.roles().get(0).role());
     }
 
     @Test
@@ -74,12 +75,9 @@ class UserServiceTest {
 
         IllegalArgumentException thrownException = assertThrows(
             IllegalArgumentException.class,
-            () -> userService.signup(request),
-            "중복된 회원가입 시 IllegalArgumentException이 발생해야 합니다."
+            () -> userService.signup(request)
         );
 
         assertEquals("이미 존재하는 사용자입니다.", thrownException.getMessage());
     }
-
-
 }
