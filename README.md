@@ -1,6 +1,6 @@
 # **IntelliPick Onboarding API** 🏗️
 
-LINK : 3.39.10.79:8080/swagger-ui/index.html
+LINK : [Swagger UI](http://3.39.10.79:8080/swagger-ui/index.html)
 
 > **Spring Boot 기반의 회원가입, 로그인, JWT 인증, 관리자 권한 관리 API**  
 > 이 프로젝트는 **Spring Security + JWT** 기반의 인증 시스템을 구축하며,  
@@ -29,7 +29,7 @@ java -jar build/libs/onboarding-0.0.1-SNAPSHOT.jar
 ```
 
 ### **3. API 문서 확인 (Swagger UI)**
-API 테스트 및 문서를 보려면 [Swagger UI](3.39.10.79:8080/swagger-ui/index.html) 접속  
+API 테스트 및 문서를 보려면 [Swagger UI](http://3.39.10.79:8080/swagger-ui/index.html) 접속  
 
 ---
 
