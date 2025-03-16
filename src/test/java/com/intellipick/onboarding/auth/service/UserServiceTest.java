@@ -4,6 +4,7 @@ import com.intellipick.onboarding.auth.dto.SignupRequest;
 import com.intellipick.onboarding.auth.dto.SignupResponse;
 import com.intellipick.onboarding.auth.entity.Role;
 import com.intellipick.onboarding.auth.entity.User;
+import com.intellipick.onboarding.auth.exception.UserAlreadyExistsException;
 import com.intellipick.onboarding.auth.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -55,11 +56,11 @@ class UserServiceTest {
         assertNotNull(response);
         assertEquals("testuser", response.username());
         assertEquals("testnickname", response.nickname());
-        assertEquals(Role.ROLE_USER, response.roles().get(0).role());
+        assertEquals("USER", response.roles().get(0)); // ✅ `ROLE_USER` → `"USER"`
     }
 
     @Test
-    @DisplayName("중복된 회원가입 요청 시 예외가 발생한다.")
+    @DisplayName("중복된 회원가입 요청 시 UserAlreadyExistsException 발생")
     void signup_Fail_DuplicateUser() {
         SignupRequest request = new SignupRequest("testuser", "password", "testnickname");
 
@@ -73,11 +74,11 @@ class UserServiceTest {
         when(userRepository.findByUsername(request.username()))
             .thenReturn(Optional.of(existingUser));
 
-        IllegalArgumentException thrownException = assertThrows(
-            IllegalArgumentException.class,
+        UserAlreadyExistsException thrownException = assertThrows(
+            UserAlreadyExistsException.class, // ✅ `IllegalArgumentException` → `UserAlreadyExistsException`
             () -> userService.signup(request)
         );
 
-        assertEquals("이미 존재하는 사용자입니다.", thrownException.getMessage());
+        assertEquals("이미 가입된 사용자입니다.", thrownException.getMessage()); // ✅ 예외 메시지 수정
     }
 }

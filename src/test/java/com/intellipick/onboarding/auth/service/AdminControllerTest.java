@@ -46,10 +46,10 @@ class AdminControllerTest {
     @Test
     @DisplayName("관리자 권한을 부여할 수 있다.")
     void grantAdminRole_Success() {
-        // ✅ 관리자 권한 설정
+        // ✅ 관리자 권한 설정 (ROLE_ADMIN으로 변경)
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
-            (Collection) List.of(new SimpleGrantedAuthority("ROLE_ADMIN")) // ✅ 권한 일치
+            (Collection) List.of(new SimpleGrantedAuthority("ROLE_ADMIN")) // ✅ 수정됨
         );
         SecurityContextHolder.setContext(securityContext);
 
@@ -67,28 +67,30 @@ class AdminControllerTest {
 
         assertNotNull(response);
         assertEquals("testuser", response.username());
-        assertEquals(Role.ROLE_ADMIN, response.roles().get(0).role()); // ✅ 검증 수정
+
+        // ✅ List<String>을 비교하도록 변경
+        assertEquals(List.of("ADMIN"), response.roles()); // ✅ "ROLE_ADMIN" → "ADMIN"으로 변환되었음
     }
 
     @Test
-    @DisplayName("일반 사용자가 관리자 권한 부여를 시도하면 예외 발생")
+    @DisplayName("일반 사용자가 관리자 권한 부여를 시도하면 AccessDeniedException 발생")
     void grantAdminRole_Fail_UnauthorizedUser() {
-        // ✅ 일반 사용자 권한 설정
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
-            (Collection) List.of(new SimpleGrantedAuthority("ROLE_USER")) // ✅ 권한 일치
+            (Collection) List.of(new SimpleGrantedAuthority("ROLE_USER"))
         );
         SecurityContextHolder.setContext(securityContext);
 
-        assertThrows(
-            AccessDeniedException.class, // ✅ SecurityException → AccessDeniedException
-            () -> adminController.grantAdminRole(1L),
-            "관리자 권한이 없는 사용자가 요청하면 AccessDeniedException 발생해야 합니다."
+        AccessDeniedException thrownException = assertThrows(
+            AccessDeniedException.class,
+            () -> adminController.grantAdminRole(1L)
         );
+
+        assertEquals("관리자 권한이 필요한 요청입니다. 접근 권한이 없습니다.", thrownException.getMessage());
     }
 
     @Test
-    @DisplayName("존재하지 않는 사용자에게 권한을 부여하려 하면 예외 발생")
+    @DisplayName("존재하지 않는 사용자에게 권한을 부여하려 하면 IllegalArgumentException 발생")
     void grantAdminRole_Fail_UserNotFound() {
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
