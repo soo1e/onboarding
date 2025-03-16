@@ -46,19 +46,17 @@ class AdminControllerTest {
     @Test
     @DisplayName("관리자 권한을 부여할 수 있다.")
     void grantAdminRole_Success() {
-        // ✅ 관리자 권한 설정 (ROLE_ADMIN으로 변경)
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
             (Collection) List.of(new SimpleGrantedAuthority("ROLE_ADMIN")) // ✅ 수정됨
         );
         SecurityContextHolder.setContext(securityContext);
 
-        // ✅ 대상 사용자 설정
         User user = User.builder()
             .id(1L)
             .username("testuser")
             .nickname("testnickname")
-            .role(Role.ROLE_USER) // ✅ 기존: ROLE_USER
+            .role(Role.ROLE_USER)
             .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -68,8 +66,7 @@ class AdminControllerTest {
         assertNotNull(response);
         assertEquals("testuser", response.username());
 
-        // ✅ List<String>을 비교하도록 변경
-        assertEquals(List.of("ADMIN"), response.roles()); // ✅ "ROLE_ADMIN" → "ADMIN"으로 변환되었음
+        assertEquals(List.of("ADMIN"), response.roles());
     }
 
     @Test

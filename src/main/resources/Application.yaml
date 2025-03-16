@@ -19,6 +19,7 @@ jwt:
 springdoc:
   api-docs:
     enabled: true
+    path: /v3/api-docs
   swagger-ui:
     path: /swagger-ui
     operations-sorter: method

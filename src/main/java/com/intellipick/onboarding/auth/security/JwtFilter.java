@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -29,9 +29,16 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
+        String requestURI = httpRequest.getRequestURI();
+
+        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs")) {
+            System.out.println("Swagger 요청 - 필터에서 제외됨: " + requestURI);
+            chain.doFilter(request, response);
+            return;
+        }
+
         String token = jwtUtil.resolveToken(httpRequest);
 
-        // ✅ 토큰이 없을 경우 요청을 그대로 진행
         if (token == null) {
             chain.doFilter(request, response);
             return;
@@ -59,6 +66,9 @@ public class JwtFilter extends GenericFilterBean {
         }
     }
 
+    /**
+     * 에러 응답을 반환하는 유틸리티 메서드
+     */
     private void sendErrorResponse(HttpServletResponse response, String errorCode, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");

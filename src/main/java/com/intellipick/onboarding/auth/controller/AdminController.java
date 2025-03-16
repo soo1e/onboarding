@@ -23,23 +23,20 @@ public class AdminController {
 
     @PostMapping("/users/{userId}/roles")
     public ResponseEntity<?> grantAdminRole(@PathVariable Long userId) {
-        // ✅ 1. 관리자 권한 확인 먼저 수행
         Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         if (auth.getAuthorities().stream().noneMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ROLE_ADMIN"))) {
-            throw new AccessDeniedException(); // 🔹 관리자 권한이 없으면 즉시 예외 발생
+            throw new AccessDeniedException();
         }
 
-        // ✅ 2. 사용자 존재 여부 확인
         User user = userRepository.findById(userId)
             .orElseThrow(() -> new IllegalArgumentException("해당 사용자를 찾을 수 없습니다."));
 
-        // ✅ 3. 새로운 User 객체 생성 (불변성 유지)
         User updatedUser = User.builder()
-            .id(user.getId()) // 기존 ID 유지
+            .id(user.getId())
             .username(user.getUsername())
-            .password(user.getPassword()) // 비밀번호 유지
+            .password(user.getPassword())
             .nickname(user.getNickname())
-            .role(Role.ROLE_ADMIN) // 관리자 권한 부여
+            .role(Role.ROLE_ADMIN)
             .build();
 
         userRepository.save(updatedUser);
