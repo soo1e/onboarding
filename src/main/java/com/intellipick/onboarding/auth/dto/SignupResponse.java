@@ -6,12 +6,9 @@ import java.util.List;
 public record SignupResponse(
 	String username,
 	String nickname,
-	List<RoleWrapper> roles
+	List<String> roles // ✅ Enum이 아니라 문자열 리스트 반환
 ) {
-	public record RoleWrapper(String role) {
-	}
-
 	public SignupResponse(String username, String nickname, Role role) {
-		this(username, nickname, List.of(new RoleWrapper(role.name().replace("ROLE_", ""))));
+		this(username, nickname, List.of(role.name().replace("ROLE_", ""))); // ✅ "ROLE_" 제거하여 반환
 	}
 }
