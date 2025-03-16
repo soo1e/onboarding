@@ -1,6 +1,7 @@
 package com.intellipick.onboarding.auth.security;
 
 import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import jakarta.servlet.http.HttpServletRequest;
@@ -20,13 +21,11 @@ public class JwtUtil {
     }
 
     public String generateToken(String username, String role) {
-        System.out.println("[JwtUtil] 토큰 생성 - username: " + username + ", role: " + role);
-
         return Jwts.builder()
             .setSubject(username)
             .claim("role", role)
             .setIssuedAt(new Date())
-            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60))
+            .setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60)) // 1시간 유효
             .signWith(SignatureAlgorithm.HS256, secretKey)
             .compact();
     }
@@ -50,8 +49,10 @@ public class JwtUtil {
         try {
             extractClaims(token);
             return true;
+        } catch (ExpiredJwtException e) {
+            throw new IllegalArgumentException("토큰이 만료되었습니다.");
         } catch (Exception e) {
-            return false;
+            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
         }
     }
 

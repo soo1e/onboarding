@@ -6,6 +6,7 @@ import com.intellipick.onboarding.auth.dto.SignupRequest;
 import com.intellipick.onboarding.auth.dto.SignupResponse;
 import com.intellipick.onboarding.auth.entity.Role;
 import com.intellipick.onboarding.auth.entity.User;
+import com.intellipick.onboarding.auth.exception.UserAlreadyExistsException;
 import com.intellipick.onboarding.auth.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 
@@ -18,7 +19,7 @@ public class UserService {
 
 	public SignupResponse signup(SignupRequest request) {
 		if (userRepository.findByUsername(request.username()).isPresent()) {
-			throw new IllegalArgumentException("이미 존재하는 사용자입니다.");
+			throw new UserAlreadyExistsException();
 		}
 
 		User user = User.builder()

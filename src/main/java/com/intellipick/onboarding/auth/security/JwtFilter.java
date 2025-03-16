@@ -30,23 +30,41 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String token = jwtUtil.resolveToken(httpRequest);
-        if (token != null && jwtUtil.validateToken(token)) {
+
+        // ✅ 토큰이 없을 경우 요청을 그대로 진행
+        if (token == null) {
+            chain.doFilter(request, response);
+            return;
+        }
+
+        try {
+            if (!jwtUtil.validateToken(token)) {
+                sendErrorResponse(httpResponse, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
+                return;
+            }
+
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getUserRole(token);
 
-            System.out.println("[JwtFilter] 역할 확인: " + role);
-
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
-            System.out.println("[JwtFilter] 권한 저장: " + authority.getAuthority());
-
             User userDetails = new User(username, "", Collections.singletonList(authority));
             UsernamePasswordAuthenticationToken authentication =
                 new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
 
             SecurityContextHolder.getContext().setAuthentication(authentication);
-        }
 
-        chain.doFilter(request, response);
+            chain.doFilter(request, response);
+        } catch (Exception e) {
+            sendErrorResponse(httpResponse, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
+        }
     }
 
+    private void sendErrorResponse(HttpServletResponse response, String errorCode, String message) throws IOException {
+        response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+        response.setContentType("application/json");
+        response.setCharacterEncoding("UTF-8");
+        response.getWriter().write(
+            "{ \"error\": { \"code\": \"" + errorCode + "\", \"message\": \"" + message + "\" } }"
+        );
+    }
 }
