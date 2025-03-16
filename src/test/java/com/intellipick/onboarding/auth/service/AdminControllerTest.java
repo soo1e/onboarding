@@ -5,6 +5,7 @@ import com.intellipick.onboarding.auth.dto.SignupResponse;
 import com.intellipick.onboarding.auth.entity.Role;
 import com.intellipick.onboarding.auth.entity.User;
 import com.intellipick.onboarding.auth.exception.AccessDeniedException;
+import com.intellipick.onboarding.auth.exception.UserNotFoundException;
 import com.intellipick.onboarding.auth.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -46,19 +47,17 @@ class AdminControllerTest {
     @Test
     @DisplayName("관리자 권한을 부여할 수 있다.")
     void grantAdminRole_Success() {
-        // ✅ 관리자 권한 설정 (ROLE_ADMIN으로 변경)
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
             (Collection) List.of(new SimpleGrantedAuthority("ROLE_ADMIN")) // ✅ 수정됨
         );
         SecurityContextHolder.setContext(securityContext);
 
-        // ✅ 대상 사용자 설정
         User user = User.builder()
             .id(1L)
             .username("testuser")
             .nickname("testnickname")
-            .role(Role.ROLE_USER) // ✅ 기존: ROLE_USER
+            .role(Role.ROLE_USER)
             .build();
 
         when(userRepository.findById(1L)).thenReturn(Optional.of(user));
@@ -68,8 +67,7 @@ class AdminControllerTest {
         assertNotNull(response);
         assertEquals("testuser", response.username());
 
-        // ✅ List<String>을 비교하도록 변경
-        assertEquals(List.of("ADMIN"), response.roles()); // ✅ "ROLE_ADMIN" → "ADMIN"으로 변환되었음
+        assertEquals(List.of("ADMIN"), response.roles());
     }
 
     @Test
@@ -90,8 +88,9 @@ class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 사용자에게 권한을 부여하려 하면 IllegalArgumentException 발생")
+    @DisplayName("존재하지 않는 사용자에게 권한을 부여하려 하면 UserNotFoundException 발생")
     void grantAdminRole_Fail_UserNotFound() {
+        // ✅ 관리자 권한을 가진 사용자 설정
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
             (Collection) List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
@@ -100,11 +99,11 @@ class AdminControllerTest {
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException thrownException = assertThrows(
-            IllegalArgumentException.class,
+        UserNotFoundException thrownException = assertThrows(
+            UserNotFoundException.class,
             () -> adminController.grantAdminRole(99L)
         );
 
-        assertEquals("해당 사용자를 찾을 수 없습니다.", thrownException.getMessage());
+        assertEquals("해당 ID(99)의 사용자를 찾을 수 없습니다.", thrownException.getMessage());
     }
 }

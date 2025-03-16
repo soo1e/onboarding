@@ -29,7 +29,7 @@ class AuthServiceTest {
     private JwtUtil jwtUtil;
 
     @Mock
-    private PasswordEncoder passwordEncoder; // ✅ 추가됨
+    private PasswordEncoder passwordEncoder;
 
     @InjectMocks
     private AuthService authService;
@@ -47,13 +47,13 @@ class AuthServiceTest {
         User user = User.builder()
             .id(1L)
             .username("testuser")
-            .password("encodedPassword") // ✅ 실제 저장된 비밀번호는 암호화됨
+            .password("encodedPassword")
             .nickname("testnickname")
             .role(Role.ROLE_USER)
             .build();
 
         when(userRepository.findByUsername(request.username())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true); // ✅ 비밀번호 검증 추가
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(true);
         when(jwtUtil.generateToken(user.getUsername(), user.getRole().name())).thenReturn("mockedToken");
 
         LoginResponse response = authService.login(request);
@@ -70,7 +70,7 @@ class AuthServiceTest {
         when(userRepository.findByUsername(request.username())).thenReturn(Optional.empty());
 
         InvalidCredentialsException thrownException = assertThrows(
-            InvalidCredentialsException.class, // ✅ `IllegalArgumentException` → `InvalidCredentialsException`
+            InvalidCredentialsException.class,
             () -> authService.login(request)
         );
 
@@ -85,16 +85,16 @@ class AuthServiceTest {
         User user = User.builder()
             .id(1L)
             .username("testuser")
-            .password("encodedPassword") // ✅ 실제 저장된 비밀번호는 암호화됨
+            .password("encodedPassword")
             .nickname("testnickname")
             .role(Role.ROLE_USER)
             .build();
 
         when(userRepository.findByUsername(request.username())).thenReturn(Optional.of(user));
-        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false); // ✅ 비밀번호 검증 실패
+        when(passwordEncoder.matches(request.password(), user.getPassword())).thenReturn(false);
 
         InvalidCredentialsException thrownException = assertThrows(
-            InvalidCredentialsException.class, // ✅ `IllegalArgumentException` → `InvalidCredentialsException`
+            InvalidCredentialsException.class,
             () -> authService.login(request)
         );
 

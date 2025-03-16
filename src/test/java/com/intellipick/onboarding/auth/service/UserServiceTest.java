@@ -56,7 +56,7 @@ class UserServiceTest {
         assertNotNull(response);
         assertEquals("testuser", response.username());
         assertEquals("testnickname", response.nickname());
-        assertEquals("USER", response.roles().get(0)); // ✅ `ROLE_USER` → `"USER"`
+        assertEquals("USER", response.roles().get(0));
     }
 
     @Test
@@ -75,10 +75,10 @@ class UserServiceTest {
             .thenReturn(Optional.of(existingUser));
 
         UserAlreadyExistsException thrownException = assertThrows(
-            UserAlreadyExistsException.class, // ✅ `IllegalArgumentException` → `UserAlreadyExistsException`
+            UserAlreadyExistsException.class,
             () -> userService.signup(request)
         );
 
-        assertEquals("이미 가입된 사용자입니다.", thrownException.getMessage()); // ✅ 예외 메시지 수정
+        assertEquals("이미 가입된 사용자입니다.", thrownException.getMessage());
     }
 }

@@ -8,8 +8,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
@@ -29,22 +29,29 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletRequest httpRequest = (HttpServletRequest) request;
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
-        String token = jwtUtil.resolveToken(httpRequest);
+        String requestURI = httpRequest.getRequestURI();
+        System.out.println("🔵 요청 URI: " + requestURI);
 
-        // ✅ 토큰이 없을 경우 요청을 그대로 진행
+        String token = jwtUtil.resolveToken(httpRequest);
+        System.out.println("🔵 추출된 토큰: " + token);
+
         if (token == null) {
+            System.out.println("❌ JWT 토큰이 요청에 없음");
             chain.doFilter(request, response);
             return;
         }
 
         try {
             if (!jwtUtil.validateToken(token)) {
+                System.err.println("❌ JWT 검증 실패: " + token);
                 sendErrorResponse(httpResponse, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
                 return;
             }
 
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getUserRole(token);
+
+            System.out.println("✅ JWT 검증 성공: " + username + " (" + role + ")");
 
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
             User userDetails = new User(username, "", Collections.singletonList(authority));
@@ -55,6 +62,7 @@ public class JwtFilter extends GenericFilterBean {
 
             chain.doFilter(request, response);
         } catch (Exception e) {
+            System.err.println("❌ JWT 필터에서 오류 발생: " + e.getMessage());
             sendErrorResponse(httpResponse, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
         }
     }

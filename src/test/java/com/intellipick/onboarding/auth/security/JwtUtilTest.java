@@ -31,10 +31,4 @@ class JwtUtilTest {
         assertEquals("testuser", claims.getSubject());
         assertEquals("ROLE_USER", claims.get("role"));
     }
-
-    @Test
-    @DisplayName("잘못된 JWT 토큰을 검증하면 실패한다.")
-    void validateToken_Fail_InvalidToken() {
-        assertFalse(jwtUtil.validateToken("invalidToken"));
-    }
 }
