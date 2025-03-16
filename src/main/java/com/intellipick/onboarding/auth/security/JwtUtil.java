@@ -1,23 +1,21 @@
 package com.intellipick.onboarding.auth.security;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.ExpiredJwtException;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import io.jsonwebtoken.*;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import java.util.Base64;
 import java.util.Date;
 
 @Component
 public class JwtUtil {
 
-    @Value("${jwt.secret}")
     private String secretKey;
 
+    @Value("${jwt.secret}")
     public void setSecretKey(String secretKey) {
-        this.secretKey = secretKey;
+        this.secretKey = Base64.getEncoder().encodeToString(secretKey.getBytes());
     }
 
     public String generateToken(String username, String role) {
@@ -50,10 +48,11 @@ public class JwtUtil {
             extractClaims(token);
             return true;
         } catch (ExpiredJwtException e) {
-            throw new IllegalArgumentException("토큰이 만료되었습니다.");
+            System.err.println("❌ 토큰이 만료됨: " + e.getMessage());
         } catch (Exception e) {
-            throw new IllegalArgumentException("유효하지 않은 토큰입니다.");
+            System.err.println("❌ 유효하지 않은 토큰: " + e.getMessage());
         }
+        return false;
     }
 
     public String resolveToken(HttpServletRequest request) {

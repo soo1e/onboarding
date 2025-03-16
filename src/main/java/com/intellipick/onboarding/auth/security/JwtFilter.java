@@ -30,28 +30,28 @@ public class JwtFilter extends GenericFilterBean {
         HttpServletResponse httpResponse = (HttpServletResponse) response;
 
         String requestURI = httpRequest.getRequestURI();
-
-        if (requestURI.startsWith("/swagger-ui") || requestURI.startsWith("/v3/api-docs")) {
-            System.out.println("Swagger 요청 - 필터에서 제외됨: " + requestURI);
-            chain.doFilter(request, response);
-            return;
-        }
+        System.out.println("🔵 요청 URI: " + requestURI);
 
         String token = jwtUtil.resolveToken(httpRequest);
+        System.out.println("🔵 추출된 토큰: " + token);
 
         if (token == null) {
+            System.out.println("❌ JWT 토큰이 요청에 없음");
             chain.doFilter(request, response);
             return;
         }
 
         try {
             if (!jwtUtil.validateToken(token)) {
+                System.err.println("❌ JWT 검증 실패: " + token);
                 sendErrorResponse(httpResponse, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
                 return;
             }
 
             String username = jwtUtil.getUsername(token);
             String role = jwtUtil.getUserRole(token);
+
+            System.out.println("✅ JWT 검증 성공: " + username + " (" + role + ")");
 
             SimpleGrantedAuthority authority = new SimpleGrantedAuthority(role);
             User userDetails = new User(username, "", Collections.singletonList(authority));
@@ -62,13 +62,11 @@ public class JwtFilter extends GenericFilterBean {
 
             chain.doFilter(request, response);
         } catch (Exception e) {
+            System.err.println("❌ JWT 필터에서 오류 발생: " + e.getMessage());
             sendErrorResponse(httpResponse, "INVALID_TOKEN", "유효하지 않은 인증 토큰입니다.");
         }
     }
 
-    /**
-     * 에러 응답을 반환하는 유틸리티 메서드
-     */
     private void sendErrorResponse(HttpServletResponse response, String errorCode, String message) throws IOException {
         response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
         response.setContentType("application/json");

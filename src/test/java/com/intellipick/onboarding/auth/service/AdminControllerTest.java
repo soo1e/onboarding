@@ -5,6 +5,7 @@ import com.intellipick.onboarding.auth.dto.SignupResponse;
 import com.intellipick.onboarding.auth.entity.Role;
 import com.intellipick.onboarding.auth.entity.User;
 import com.intellipick.onboarding.auth.exception.AccessDeniedException;
+import com.intellipick.onboarding.auth.exception.UserNotFoundException;
 import com.intellipick.onboarding.auth.repository.UserRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -87,8 +88,9 @@ class AdminControllerTest {
     }
 
     @Test
-    @DisplayName("존재하지 않는 사용자에게 권한을 부여하려 하면 IllegalArgumentException 발생")
+    @DisplayName("존재하지 않는 사용자에게 권한을 부여하려 하면 UserNotFoundException 발생")
     void grantAdminRole_Fail_UserNotFound() {
+        // ✅ 관리자 권한을 가진 사용자 설정
         when(securityContext.getAuthentication()).thenReturn(authentication);
         when(authentication.getAuthorities()).thenReturn(
             (Collection) List.of(new SimpleGrantedAuthority("ROLE_ADMIN"))
@@ -97,11 +99,11 @@ class AdminControllerTest {
 
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        IllegalArgumentException thrownException = assertThrows(
-            IllegalArgumentException.class,
+        UserNotFoundException thrownException = assertThrows(
+            UserNotFoundException.class,
             () -> adminController.grantAdminRole(99L)
         );
 
-        assertEquals("해당 사용자를 찾을 수 없습니다.", thrownException.getMessage());
+        assertEquals("해당 ID(99)의 사용자를 찾을 수 없습니다.", thrownException.getMessage());
     }
 }

@@ -1,15 +1,21 @@
 package com.intellipick.onboarding.auth.config;
 
+import com.intellipick.onboarding.auth.security.JwtFilter;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
+@RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtFilter jwtFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -45,7 +51,8 @@ public class SecurityConfig {
                         "{ \"error\": { \"code\": \"ACCESS_DENIED\", \"message\": \"접근 권한이 없습니다.\" } }"
                     );
                 })
-            );
+            )
+            .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class); // ✅ 필터 추가
 
         return http.build();
     }
